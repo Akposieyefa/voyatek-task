@@ -37,8 +37,9 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required'
+            'blog' => 'required|exists:blogs,id',
+            'name' => 'required',
+            'post' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -96,11 +97,11 @@ class PostController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function comments(Request $request): JsonResponse
+    public function commentMethod(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'comment' => 'required',
-            'post' =>'required',
+            'post' =>'required|exists:posts,id',
             'name' =>'required',
         ]);
 
@@ -118,7 +119,7 @@ class PostController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function like(Request $request): JsonResponse
+    public function likeMethod(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'post' => 'required',

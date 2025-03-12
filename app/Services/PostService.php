@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Exceptions\DatabaseException;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Like;
@@ -35,24 +37,23 @@ readonly class PostService
     /**
      * @param  $request
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function storePost($request): JsonResponse
     {
         try {
-            $this->model->create([
+           $post =  $this->model->create([
                 'blog_id' => $request->blog,
                 'name' => $request->name,
                 'post' => $request->post
             ]);
             return response()->json([
                 'message' => 'Post created successfully',
+                'data' => new PostResource($post),
                 'success' => true
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to create post", $e->getMessage());
         }
     }
 
@@ -73,6 +74,7 @@ readonly class PostService
      * @param  $request
      * @param  $slug
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function updatePost($request,$slug): JsonResponse
     {
@@ -85,19 +87,18 @@ readonly class PostService
             ]);
             return response()->json([
                 'message' => 'Post updated successfully',
+                'data' => new PostResource($post),
                 'success' => true
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to update post", $e->getMessage());
         }
     }
 
     /**
      * @param $slug
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function deletePost($slug): JsonResponse
     {
@@ -106,43 +107,41 @@ readonly class PostService
             $post->delete();
             return response()->json([
                 'message' => 'Post deleted successfully',
+                'data' => new PostResource($post),
                 'success' => true
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to delete post", $e->getMessage());
         }
     }
 
     /**
      * @param  $request
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function commentOnPost($request): JsonResponse
     {
         try {
-            $this->commentModel->create([
+            $comment = $this->commentModel->create([
                 'post_id' => $request->post,
                 'comment' => $request->comment,
                 'name' => $request->name
             ]);
             return response()->json([
                 'message' => 'Comment made successfully',
+                'data' => new CommentResource($comment),
                 'success' => true
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to create comment", $e->getMessage());
         }
     }
 
     /**
      * @param $request
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function likePost($request): JsonResponse
     {
@@ -156,10 +155,7 @@ readonly class PostService
                 'success' => true
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to like post", $e->getMessage());
         }
     }
 }

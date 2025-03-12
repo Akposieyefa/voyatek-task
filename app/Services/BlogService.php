@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\DatabaseException;
 use App\Http\Resources\BlogResource;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
@@ -31,6 +32,7 @@ readonly class BlogService
     /**
      * @param $request
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function storeBlog($request): JsonResponse
     {
@@ -41,13 +43,11 @@ readonly class BlogService
             ]);
             return response()->json([
                 'message' => 'Blog created successfully',
+                'data' => new BlogResource($blog),
                 'success' => true
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to create blog", $e->getMessage());
         }
     }
 
@@ -68,6 +68,7 @@ readonly class BlogService
      * @param $request
      * @param $slug
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function updateBlog($request,$slug): JsonResponse
     {
@@ -80,13 +81,11 @@ readonly class BlogService
             ]);
             return response()->json([
                 'message' => 'Blog updated successfully',
+                'data' => new BlogResource($blog),
                 'success' => true
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Something unable to update blog", $e->getMessage());
         }
     }
 
@@ -94,21 +93,20 @@ readonly class BlogService
     /**
      * @param string $slug
      * @return JsonResponse
+     * @throws DatabaseException
      */
-    public function deleteBlog($slug): JsonResponse
+    public function deleteBlog(string $slug): JsonResponse
     {
         $blog = $this->model->whereSlug($slug)->firstOrFail();
         try {
             $blog->delete();
             return response()->json([
                 'message' => 'Blog deleted successfully',
+                'data' => new BlogResource($blog),
                 'success' => true
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'success' => false
-            ], Response::HTTP_BAD_REQUEST);
+            throw new DatabaseException("Sorry unable to delete blog", $e->getMessage());
         }
     }
 

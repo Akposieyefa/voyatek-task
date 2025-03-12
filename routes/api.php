@@ -22,8 +22,8 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function ($router) {
             Route::get('single/{slug}', 'show');
             Route::patch('update/{slug}', 'update');
             Route::delete('delete/{slug}', 'destroy');
-            Route::post('likes', 'like');
-            Route::post('comments', 'comment');
+            Route::post('likes', 'likeMethod');
+            Route::post('comments', 'commentMethod');
         });
     });// post routes
 
