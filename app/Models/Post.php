@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @method create(array $array)
  * @method whereSlug(string $slug)
+ * @method inRandomOrder()
  */
 class Post extends Model
 {

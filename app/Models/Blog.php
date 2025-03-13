@@ -18,7 +18,7 @@ class Blog extends Model
     use HasFactory, SoftDeletes, Sluggable;
 
     protected $fillable = [
-        'title', 'description', 'slug'
+        'title', 'description', 'cover_image', 'slug'
     ];
 
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('blogs')) {
-            Schema::create('blogs', function (Blueprint $table) {
+        if (!Schema::hasTable('posts')) {
+            Schema::create('posts', function (Blueprint $table) {
                 $table->id();
-                $table->string('title');
-                $table->longText('description');
-                $table->string('cover_image')->nullable();
+                $table->foreignIdFor(\App\Models\Blog::class, 'blog_id')->constrained()->onDelete('cascade');
+                $table->string('name');
+                $table->longText('post');
                 $table->string('slug')->unique();
                 $table->softDeletes();
                 $table->timestamps();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blogs');
+        Schema::dropIfExists('posts');
     }
 };

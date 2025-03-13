@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\DatabaseException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BlogResource;
 use App\Services\BlogService;
@@ -33,12 +34,14 @@ class BlogController extends Controller
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'description' => 'required'
+            'description' => 'required',
+            'coverImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -64,6 +67,7 @@ class BlogController extends Controller
      * @param Request $request
      * @param string $slug
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function update(Request $request, string $slug): JsonResponse
     {
@@ -86,6 +90,7 @@ class BlogController extends Controller
     /**
      * @param string $slug
      * @return JsonResponse
+     * @throws DatabaseException
      */
     public function destroy(string $slug): JsonResponse
     {

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\DatabaseException;
+use App\Helpers\FileProcessing;
 use App\Http\Resources\BlogResource;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
@@ -13,8 +14,9 @@ readonly class BlogService
 {
     /**
      * @param Blog $model
+     * @param FileProcessing $fileProcessingHelper
      */
-    public function __construct(private Blog $model)
+    public function __construct(private Blog $model, private FileProcessing $fileProcessingHelper)
     { }
 
     /**
@@ -39,7 +41,8 @@ readonly class BlogService
         try {
             $blog = $this->model->create([
                 'title' => $request->title,
-                'description' => $request->description
+                'description' => $request->description,
+                'cover_image' => $this->fileProcessingHelper->pushImageFile($request, 'coverImage')
             ]);
             return response()->json([
                 'message' => 'Blog created successfully',

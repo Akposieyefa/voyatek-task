@@ -13,7 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Blog::factory()->count(10)->create();
-        Post::factory()->count(20)->create();
+        $this->call([
+            BlogSeeder::class,
+            PostSeeder::class,
+            CommentAndLikeSeeder::class
+        ]);
     }
 }
